@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.green.greengram.application.user.UserMapper">
+    <!-- 인터페이스에 있는 메소드와 연결. 메소드명은 id랑 같다. -->
+
+    <insert id="signUp">
+        INSERT INTO USER
+        SET uid = #{uid}
+        , upw = #{upw}
+        , nm = #{nm}
+        , pic = #{pic}
+    </insert>
+    <select id="findByUid">
+        SELECT id, uid, upw, nm, pic, created_at
+        FROM USER
+        WHERE uid = #{uid}
+    </select>
+
+
+</mapper>
