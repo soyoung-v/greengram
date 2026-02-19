@@ -62,6 +62,7 @@ public class UserService {
         return UserSignInRes.builder()
                 .signedUserId( res.getId())
                 .nm(res.getNm())
+                .pic(res.getPic())
                 .build();
     }
 }

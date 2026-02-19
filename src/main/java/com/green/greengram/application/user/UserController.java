@@ -23,7 +23,7 @@ public class UserController {
     /* file upload는 multipart 라는 기술로 파일 업로드를 할건데 FE JSON을 보내지만 조금 다르게 받아야 한다.
     * req는 파일을 제외한 데이터(uid, upw, nm데이터들)
     * pic은 프로파일 이미지 파일 (required = false) null이어도 에러 안나게 함*/
-    @PostMapping("/signup")
+    @PostMapping("/sign-up")
     public ResultResponse<Integer> signUp(@RequestPart UserSignUpReq req,
                                           @RequestPart(required = false)MultipartFile pic) {
         log.info("req: {}", req);
@@ -31,7 +31,7 @@ public class UserController {
         return new ResultResponse<>("회원가입 성공", result);
     }
 
-    @PostMapping("/signin")
+    @PostMapping("/sign-in")
     public ResultResponse<?> signIn(HttpServletResponse res, @RequestBody UserSignInReq req) {
         log.info("req: {}", req);
         UserSignInRes userSignInRes = userService.signIn(req);
