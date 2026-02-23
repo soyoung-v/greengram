@@ -20,14 +20,13 @@ public class UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final MyFileUtil myFileUtil;
-//    private final JwtTokenProvider jwtTokenProvider;
 
-    public int signUp(UserSignUpReq req, MultipartFile mf){
-        String hashedPw = passwordEncoder.encode(req.getUpw());
-        log.info("pw: {}", hashedPw);
+    public int signUp(UserSignUpReq req, MultipartFile mf) {
+        String hashedPw = passwordEncoder.encode( req.getUpw() );
+        log.info("hashedPw: {}", hashedPw);
         req.setUpw(hashedPw);
 
-        //파일 업로드가 되엇으면 저장하는 파일명을 테이블에 저장
+        //파일 업로드가 되었으면 저장하는 파일명을 테이블에 저장
         String savedPicFileName = mf == null ? null : myFileUtil.makeRandomFileName(mf);
         req.setPic(savedPicFileName);
 
@@ -35,34 +34,38 @@ public class UserService {
         int result = userMapper.signUp(req);
         if( mf != null ) {
             long id = req.getId(); //프로파일 이미지 저장하는 규칙이 있는데 pk값의 폴더를 만들고 거기에 이미지 파일을 저장한다.
-            String middlePath = String.format("user/%d", id);
+            //String middlePath = String.format("user/%d", id);
+            String middlePath = "user/" + id;
             //폴더 만들기
             myFileUtil.makeFolders(middlePath);
 
-            String fullFilePath = String.format("%s/%s",middlePath, savedPicFileName);
+            String fullFilePath = String.format("%s/%s", middlePath, savedPicFileName);
 
             try {
                 myFileUtil.transferTo(mf, fullFilePath);
             } catch (IOException e) {
-                e.printStackTrace();//오류 메세지 콘솔에 출력
+                e.printStackTrace(); //오류 메세지 콘솔에 출력
             }
         }
+
         return result;
     }
-    public UserSignInRes signIn(UserSignInReq req){
-        UserGetOneRes res = userMapper.findByUid(req.getUid());
+
+    public UserSignInRes signIn(UserSignInReq req) {
+        UserGetOneRes res = userMapper.findByUid( req.getUid() );
         log.info("res: {}", res);
-        if(!passwordEncoder.matches(req.getUpw(),res.getUpw())){
+        if(!passwordEncoder.matches(req.getUpw(), res.getUpw())) {
             return null;
         }
-        //로그인 성공!! 예전에는 AT, RT를 FE전달 -> 보안 쿠키 이용
+        //로그인 성공!! 예전에는 AT, RT을 FE전달  >>> 보안 쿠키 이용
 //        JwtUser jwtUser = new JwtUser(res.getId());
 //        String accessToken = jwtTokenProvider.generateAccessToken(jwtUser);
 //        String refreshToken = jwtTokenProvider.generateRefreshToken(jwtUser);
+
         return UserSignInRes.builder()
-                .signedUserId( res.getId())
-                .nm(res.getNm())
-                .pic(res.getPic())
+                .signedUserId( res.getId() )
+                .nm( res.getNm() )
+                .pic( res.getPic() )
                 .build();
     }
 }

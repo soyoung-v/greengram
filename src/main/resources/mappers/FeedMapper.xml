@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.green.greengram.application.feed.FeedMapper">
+    <!-- 인터페이스에 있는 메소드와 연결. 메소드명은 id랑 같다. -->
+
+    <insert id="save" useGeneratedKeys="true" keyProperty="FeedId">
+        INSERT INTO feed
+        SET location = #{location}
+        , contents = #{contents}
+        , user_id = #{SignedUserId}
+    </insert>
+
+    <insert id="savePics">
+        INSERT INTO feed_pic
+        (feed_id, pic)
+        VALUES
+        <foreach collection="picSavedNames" item="item" separator=",">
+            (#{feedId}, #{item})
+        </foreach>
+    </insert>
+    <select id="findAll">
+        SELECT f.id, f.contents, f.location, f.created_at
+        , u.id AS writerUserId
+        , u.uid AS writerUid
+        , u.nm AS writerNickName
+        , u.pic AS writerPic
+        FROM user u
+        JOIN feed f
+         ON f.user_id = u.id
+        <if test="profileUserId != null and profileUserId > 0">
+            WHERE f.user_id = #{profileUserId}
+        </if>
+        ORDER BY f.id DESC
+        LIMIT #{startIdx}, #{size}
+    </select>
+    <select id="findPicsById">
+        SELECT pic
+        FROM feed_pic
+        WHERE feed_id = #{id}
+    </select>
+
+</mapper>

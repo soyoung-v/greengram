@@ -20,12 +20,15 @@ public class UserController {
     private final UserService userService;
     private final JwtTokenManager jwtTokenManager;
 
-    /* file upload는 multipart 라는 기술로 파일 업로드를 할건데 FE JSON을 보내지만 조금 다르게 받아야 한다.
-    * req는 파일을 제외한 데이터(uid, upw, nm데이터들)
-    * pic은 프로파일 이미지 파일 (required = false) null이어도 에러 안나게 함*/
+    /* file upload는 Multipart 라는 기술로 파일 업로드를 할건데 FE JSON을 보내지만 조금
+     * 다르게 받아야 한다. @RequestPart로 받아야 한다.
+     * req는 파일을 제외한 데이터(uid, upw, nm 데이터들)
+     * pic은 프로파일 이미지 파일
+     *  */
     @PostMapping("/sign-up")
-    public ResultResponse<Integer> signUp(@RequestPart UserSignUpReq req,
-                                          @RequestPart(required = false)MultipartFile pic) {
+    public ResultResponse<?> signUp(@RequestPart UserSignUpReq req
+            , @RequestPart(required = false) MultipartFile pic
+    ) {
         log.info("req: {}", req);
         int result = userService.signUp(req, pic);
         return new ResultResponse<>("회원가입 성공", result);
@@ -40,12 +43,12 @@ public class UserController {
             JwtUser jwtUser = new JwtUser( userSignInRes.getSignedUserId() );
             jwtTokenManager.issue(res, jwtUser);
         }
-        return new ResultResponse<>(userSignInRes == null ? "아이디/비밀전호를 확인해 주세요." : "로그인 성공", userSignInRes);
+        return new ResultResponse<>(userSignInRes == null ? "아이디/비밀번호를 확인해 주세요." : "로그인 성공", userSignInRes);
     }
 
-    @PostMapping("/signout")
-    public ResultResponse<?> signOut(HttpServletResponse res){
+    @PostMapping("/sign-out")
+    public ResultResponse<?> signOut(HttpServletResponse res) {
         jwtTokenManager.signOut(res);
-        return new ResultResponse<>("로그아웃 성공",1);
+        return new ResultResponse<>("로그아웃 성공", 1);
     }
 }
