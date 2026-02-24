@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class FeedLikeService {
     private final FeedLikeMapper feedLikeMapper;
 
-    public boolean toggleFeedLike(FeedLikeReq req){
+    public boolean toggleFeedLike(FeedLikeReq req) {
         int result = feedLikeMapper.delLike(req);
         boolean toggle = result > 0 ? false : true;
         if(toggle){
@@ -26,6 +26,5 @@ public class FeedLikeService {
 //
 //        feedLikeMapper.insLike(req);
 //        return true; // 좋아요 생성
-
     }
 }

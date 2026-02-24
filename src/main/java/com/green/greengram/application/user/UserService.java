@@ -100,4 +100,16 @@ public class UserService {
         userMapper.updUser(dto);
         return saveFileName;
     }
+
+    public void deleteProfilePic(long id){
+        //폴더 쨰로 삭제
+        String absolutePath = myFileUtil.fileUploadPath + "/user/" + id;
+        myFileUtil.deleteDirectory(absolutePath);
+
+        UserUpdDto dto = UserUpdDto.builder()
+                .id(id)
+                .pic("")
+                .build();
+        userMapper.updUser(dto);
+    }
 }

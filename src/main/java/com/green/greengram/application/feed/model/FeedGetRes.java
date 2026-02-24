@@ -1,6 +1,7 @@
 package com.green.greengram.application.feed.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.green.greengram.application.feedcomment.model.FeedCommentGetRes;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,4 +23,6 @@ public class FeedGetRes {
     private int isLike;
     private int likeCount;
     private List<String> pics = new ArrayList<>();
+
+    private FeedCommentGetRes comments;
 }
