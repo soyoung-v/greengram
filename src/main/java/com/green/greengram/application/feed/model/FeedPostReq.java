@@ -10,6 +10,6 @@ import lombok.ToString;
 public class FeedPostReq {
     private  String location;
     private  String contents;
-    private  long SignedUserId;
-    private  long FeedId;
+    private  long signedUserId;
+    private  long feedId;
 }

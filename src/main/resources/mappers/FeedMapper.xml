@@ -3,11 +3,11 @@
 <mapper namespace="com.green.greengram.application.feed.FeedMapper">
     <!-- 인터페이스에 있는 메소드와 연결. 메소드명은 id랑 같다. -->
 
-    <insert id="save" useGeneratedKeys="true" keyProperty="FeedId">
+    <insert id="save" useGeneratedKeys="true" keyProperty="feedId">
         INSERT INTO feed
         SET location = #{location}
         , contents = #{contents}
-        , user_id = #{SignedUserId}
+        , user_id = #{signedUserId}
     </insert>
 
     <insert id="savePics">
@@ -26,18 +26,25 @@
         , u.pic AS writerPic
         , fl.feed_id IS NOT NULL AS isLike
         , IFNULL(flc.likeCount, 0) AS likeCount
+        , IFNULL(fcc.commentCount, 0) AS commentCount
         FROM feed f
         JOIN user u
-        ON u.id = f.user_id
+            ON u.id = f.user_id
         LEFT JOIN feed_like AS fl
-        ON fl.feed_id = f.id
-        AND fl.user_id = #{signedUserId}
+            ON fl.feed_id = f.id
+            AND fl.user_id = #{signedUserId}
         LEFT JOIN (
-        SELECT feed_id, COUNT(feed_id) AS likeCount
-        FROM feed_like
-        GROUP BY feed_id
-        ) AS flc
-        ON flc.feed_id = f.id
+                    SELECT feed_id, COUNT(feed_id) AS likeCount
+                    FROM feed_like
+                    GROUP BY feed_id
+                    ) AS flc
+            ON flc.feed_id = f.id
+        LEFT JOIN (
+                    SELECT feed_id, COUNT(feed_id) as commentCount
+                    FROM feed_comment
+                    GROUP By feed_id
+                    ) as fcc
+            ON fcc.feed_id = f.id
         <if test=" profileUserId != null and profileUserId > 0 ">
             WHERE f.user_id = #{profileUserId}
         </if>
@@ -49,5 +56,26 @@
         FROM feed_pic
         WHERE feed_id = #{id}
     </select>
+
+    <delete id="delete">
+        DELETE FROM feed
+        WHERE id = #{feedId}
+        AND user_id = #{signedUserId}
+    </delete>
+
+    <delete id="deleteRef">
+        DELETE fc, fl, fp
+        FROM feed f
+        LEFT JOIN feed_comment fc
+        ON fc.feed_id = f.id
+        LEFT JOIN feed_like fl
+        ON fl.feed_id = f.id
+        LEFT JOIN feed_pic fp
+        ON fp.feed_id = f.id
+        WHERE f.id = #{feedId}
+        AND f.user_id = #{signedUserId}
+    </delete>
+
+
 
 </mapper>

@@ -9,5 +9,22 @@
         , feed_id = #{feedId}
         , feed_comment = #{comment}
     </insert>
+    
+    <select id="findAll">
+        SELECT fc.id, fc.feed_id, fc.feed_comment, u.id as writerUserId
+        , u.nm as writerNm, n.pic as writerPic
+        FROM feed_comment fc
+        JOIN user u
+        ON u.id = fc.user_id
+        WHERE fc.feed_id = #{feedId}
+        ORDER BY fc.id DESC
+        LIMIT #{startIdx}, #{size}
+    </select>
+
+    <delete id="delete">
+        DELETE FROM feed_comment
+        WHERE id = #{feedCommentId}
+        AND user_id = #{signedUserId}
+    </delete>
 
 </mapper>
