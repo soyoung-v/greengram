@@ -16,10 +16,21 @@
         WHERE uid = #{uid}
     </select>
     <select id="findProfileUser">
-        SELECT u.id, u.pic, u.created_at, u.uid, u.nm, count(DISTINCT f.id) as feedCount
-        FROM USER u
+        SELECT u.id, u.pic, u.created_at, u.uid, u.nm,
+            count(DISTINCT f.id) AS feedCount,
+            COUNT(DISTINCT follower.from_user_id,follower.to_user_id) AS followerCount,
+            COUNT(DISTINCT following.from_user_id,following.to_user_id) AS followingCount,
+            MAX(DISTINCT if(follower.from_user_id = #{signedUserId}, 1, 0)) +
+            MAX(DISTINCT if(following.to_user_id = #{signedUserId}, 2, 0)) AS followState
+        FROM user u
         LEFT JOIN feed f
-        ON u.id = f.user_id
+            ON f.user_id = u.id
+
+        LEFT JOIN user_follow follower
+        ON follower.to_user_id = u.id
+
+        LEFT JOIN user_follow following
+        ON following.from_user_id = u.id
         WHERE u.id = #{profileUserId}
     </select>
     <select id="findById">

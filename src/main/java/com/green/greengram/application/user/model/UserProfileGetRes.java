@@ -17,6 +17,7 @@ public class UserProfileGetRes {
 
     //TODO: 향후작업
     private int allFeedLikeCount; //나의 모든 피드에 좋아요 수
+
     private int followerCount; //나를 팔로우하는 사람들의 수
     private int followingCount; //내가 팔로우하는 사람들의 수
     private int followState; //팔로우 상태
